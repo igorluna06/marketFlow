@@ -27,4 +27,36 @@ export class ProductService{
 
         this.productRepository.addProduct(product);
     }
+
+    updateProduct(product: Product){
+
+        this.productRepository.update(product);
+    }
+
+    addStock(quantity: number, code: string){
+
+        const productFound: Product | undefined = this.productRepository.findByCode(code);
+
+        if(!productFound){
+            throw new Error("Produto não encontrado!");
+        }
+
+        productFound.increaseStock(quantity);
+
+        this.updateProduct(productFound);
+    }
+
+    removeStock(quantity: number, code: string){
+
+        const productFound: Product | undefined = this.productRepository.findByCode(code);
+
+        if(!productFound){
+            throw new Error("Produto não encontrado!");
+        }
+
+        productFound.decreaseStock(quantity);
+
+        this.updateProduct(productFound);
+    }
+
 }

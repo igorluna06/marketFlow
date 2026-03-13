@@ -52,7 +52,7 @@ export class ProductRepository{
 
     }
 
-    updateProduct(productUpdate: Product){
+    update(productUpdate: Product){
 
         const productIndexUpdate: number= this.products.findIndex(product => product.id === productUpdate.id);
 
