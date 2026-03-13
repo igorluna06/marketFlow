@@ -1,7 +1,6 @@
 import { ProductRepository } from "../repository/ProductRepository";
 import { Product } from "../entities/Product";
 import { productIdGenerator } from "../utils/generators/productIdGenerator";
-import { productCodeGenerator } from "../utils/generators/productCodeGenerator";
 import { nameValidator } from "../utils/validators/nameValidator";
 
 export class ProductService{
