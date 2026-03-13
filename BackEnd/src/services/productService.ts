@@ -2,6 +2,7 @@ import { ProductRepository } from "../repository/ProductRepository";
 import { Product } from "../entities/Product";
 import { productIdGenerator } from "../utils/generators/productIdGenerator";
 import { nameValidator } from "../utils/validators/nameValidator";
+import { codeValidator } from "../utils/validators/codeValidator";
 
 export class ProductService{
 
@@ -14,6 +15,7 @@ export class ProductService{
 
     createProduct(code: string, name: string, price: number, stock: number){
 
+        codeValidator(code);
         nameValidator(name);
 
         if(price <= 0){
@@ -35,6 +37,8 @@ export class ProductService{
 
     addStock(quantity: number, code: string){
 
+        codeValidator(code);
+
         const productFound: Product | undefined = this.productRepository.findByCode(code);
 
         if(!productFound){
@@ -47,6 +51,8 @@ export class ProductService{
     }
 
     removeStock(quantity: number, code: string){
+
+        codeValidator(code);
 
         const productFound: Product | undefined = this.productRepository.findByCode(code);
 
@@ -61,6 +67,8 @@ export class ProductService{
 
 
     deleteProduct(code: string){
+
+        codeValidator(code);
 
         const productFound: Product | undefined = this.productRepository.findByCode(code);
 

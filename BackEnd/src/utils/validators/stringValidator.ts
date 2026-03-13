@@ -4,3 +4,10 @@ export function containsOnlyLettersAndSpaces(text: string){
 
         return justLetterAndSpace.test(text);
 };
+
+export function containsOnlyNumbers(text: string){
+
+        const justNumbers = /^\d+$/;
+
+        return justNumbers.test(text);
+};
