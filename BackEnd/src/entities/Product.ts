@@ -1,8 +1,8 @@
 export class Product{
 
     private _id: number;
-    readonly _code: string;
-    readonly _name: string;
+    private _code: string;
+    private _name: string;
     private _price: number = 0;
     private _stock: number = 0;
 
