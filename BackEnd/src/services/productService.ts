@@ -59,4 +59,20 @@ export class ProductService{
         this.updateProduct(productFound);
     }
 
+
+    deleteProduct(code: string){
+
+        const productFound: Product | undefined = this.productRepository.findByCode(code);
+
+        if(!productFound){
+            throw new Error("Produto não encontrado!");
+        }
+
+        this.productRepository.delete(productFound);
+
+    }
+
+    takeAllProducts(): Product[]{
+        return this.productRepository.findAll();;
+    }
 }
