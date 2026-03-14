@@ -25,9 +25,17 @@ export class ProductService{
             throw new Error("Quantidade não pode ser 0 ou negativo")
         }
 
-        const product: Product = new Product(productIdGenerator(), code, name, price, stock);
+        const productFound: Product | undefined = this.productRepository.findByCode(code);
 
-        this.productRepository.addProduct(product);
+        if(productFound){
+            productFound.increaseStock(stock);
+            
+        }else{
+            const product: Product = new Product(productIdGenerator(), code, name, price, stock);
+
+            this.productRepository.addProduct(product);
+        }
+
     }
 
     updateProduct(product: Product){
