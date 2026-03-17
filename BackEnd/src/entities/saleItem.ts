@@ -12,6 +12,8 @@ import { Product } from "./Product";
  */
 export class SaleItem {
 
+    private _saleItemId: number;
+
     /**
      * Produto associado ao item da venda
      */
@@ -33,9 +35,10 @@ export class SaleItem {
      * @param product produto associado ao item
      * @param quantity quantidade inicial do produto
      */
-    constructor(product: Product, quantity: number){
+    constructor(saleItemId: number, product: Product, quantity: number){
         this._product = product;
         this.increaseQuantity(quantity);
+        this._saleItemId = saleItemId;
     }
 
     /**
@@ -52,6 +55,8 @@ export class SaleItem {
      * Retorna o preço total do item
      */
     get totalPrice(): number{return this._totalPrice};
+
+    get saleItemId(): number{return this._saleItemId};
 
     /**
      * Aumenta a quantidade do item na venda.
@@ -84,6 +89,11 @@ export class SaleItem {
         if(quantity <= 0){
             throw new Error("Quantidade não pode ser 0 ou negativo!")
         }
+
+        if((this._quantity - quantity) < 0){
+            throw new Error("Quantidade insuficiente!")
+        }
+        
         this._quantity -= quantity;
         this._totalPrice = this._product.price * this._quantity;
     }
