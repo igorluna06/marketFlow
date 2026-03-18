@@ -1,8 +1,3 @@
-/**
- * Contador interno utilizado para gerar identificadores únicos
- * para produtos dentro da aplicação.
- */
-let countProduct = 0;
 
 /**
  * Gera um novo identificador incremental para produtos.
@@ -15,9 +10,9 @@ let countProduct = 0;
  * 
  * @returns número identificador único do produto
  */
-export function productIdGenerator(): number{
+export function idGenerator(id: number): number{
 
-    countProduct++;
-    return countProduct;
+    id++ 
+    return id;
 
 }

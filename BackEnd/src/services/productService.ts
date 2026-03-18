@@ -1,6 +1,6 @@
 import { ProductRepository } from "../repository/ProductRepository";
 import { Product } from "../entities/Product";
-import { productIdGenerator } from "../utils/generators/productIdGenerator";
+import { idGenerator} from "../utils/generators/IdGenerator";
 import { nameValidator } from "../utils/validators/nameValidator";
 import { codeValidator } from "../utils/validators/codeValidator";
 
@@ -66,7 +66,9 @@ export class ProductService{
             productFound.increaseStock(stock);
             
         }else{
-            const product: Product = new Product(productIdGenerator(), code, name, price, stock);
+
+            const id: number= idGenerator(this.takeAllProducts().reduce((accumulator, currentValue) => Math.max(accumulator, currentValue.id), 0));
+            const product: Product = new Product(id, code, name, price, stock);
 
             this.productRepository.addProduct(product);
         }

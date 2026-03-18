@@ -1,4 +1,4 @@
-import { saleItemIdGenerator } from "../utils/generators/saleItemIdGenerator";
+import { idGenerator } from "../utils/generators/IdGenerator";
 import { Product } from "./Product";
 import { SaleItem } from "./saleItem";
 
@@ -64,7 +64,7 @@ export class Sale{
      * @param product produto que será vendido
      * @param quantity quantidade vendida
      */
-    addItem(product: Product, quantity: number){
+    addItem(id: number, product: Product, quantity: number){
 
         if(this._isConfirmed){
             throw new Error("Venda já finalizada!")
@@ -74,7 +74,7 @@ export class Sale{
             throw new Error("Produto com estoque insuficiente!")
         }
 
-        const saleItem: SaleItem = new SaleItem(saleItemIdGenerator(),product, quantity);
+        const saleItem: SaleItem = new SaleItem(id,product, quantity);
 
         this._items.push(saleItem);
 
@@ -147,6 +147,13 @@ export class Sale{
 
         this._total = this._items.reduce((accumulator, currentValue) => accumulator + currentValue.totalPrice, 0);
 
+    }
+
+    takeAllSaleItems(){
+
+        const copyItems: SaleItem[] = this.items.slice();
+
+        return copyItems
     }
 
     confirmSale(){

@@ -1,6 +1,7 @@
 import { Product } from "../entities/Product";
 import fs from "fs";
 import path from "path";
+import { reconstructEntities } from "../utils/reconstructors/entityReconstructor";
 
 /**
  * Repositório responsável por persistir e recuperar produtos.
@@ -34,7 +35,9 @@ export class ProductRepository{
         this.filePath = path.join(__dirname, "../data/products.json");
 
         const fileContent = fs.readFileSync(this.filePath, "utf-8");
-        this.products = JSON.parse(fileContent);
+        const rawArray = JSON.parse(fileContent);
+
+        this.products = reconstructEntities(rawArray, Product);
     }
 
      /**
