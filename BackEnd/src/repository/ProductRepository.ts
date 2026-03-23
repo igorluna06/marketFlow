@@ -70,7 +70,7 @@ export class ProductRepository{
      */
     findByCode(code: string): Product | undefined{
 
-        const productFound: Product | undefined = this.products.find(product => product.code === code);
+        const productFound: Product | undefined = this.products.find(product => product.getCode() === code);
 
         return productFound;
     }
@@ -83,7 +83,7 @@ export class ProductRepository{
      */
     findById(id: number): Product | undefined{
 
-        const productFound: Product | undefined = this.products.find(product => product.id === id);
+        const productFound: Product | undefined = this.products.find(product => product.getId() === id);
 
         return productFound;
     }
@@ -95,7 +95,7 @@ export class ProductRepository{
      */
     delete(productDelete: Product){
 
-        const productIndexRemove: number= this.products.findIndex(product => product.id === productDelete.id);
+        const productIndexRemove: number= this.products.findIndex(product => product.getId() === productDelete.getId());
 
         this.products.splice(productIndexRemove, 1);
 
@@ -110,7 +110,7 @@ export class ProductRepository{
      */
     update(productUpdate: Product){
 
-        const productIndexUpdate: number= this.products.findIndex(product => product.id === productUpdate.id);
+        const productIndexUpdate: number= this.products.findIndex(product => product.getId() === productUpdate.getId());
 
         this.products[productIndexUpdate] = productUpdate;
 

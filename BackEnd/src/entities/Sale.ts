@@ -1,3 +1,7 @@
+import { InsufficientStockError } from "../utils/errors/productErrors/InsufficientStockError";
+import { EmptySaleError } from "../utils/errors/SaleErrors/EmptySaleError";
+import { SaleAlreadyConfirmedError } from "../utils/errors/SaleErrors/SaleAlreadyConfirmedError";
+import { SaleItemNotFoundError } from "../utils/errors/SaleItemErrors/SaleItemNotFoundError";
 import { idGenerator } from "../utils/generators/IdGenerator";
 import { Product } from "./Product";
 import { SaleItem } from "./saleItem";
@@ -44,37 +48,37 @@ export class Sale{
     }
 
     /** Retorna o identificador da venda */
-    get saleId(): number{return this._saleId;}
+    getSaleId(): number{return this._saleId;}
 
     /** Retorna os itens da venda */
-    get items(): SaleItem[]{return this._items;}
-
-    /** Retorna os itens da venda */
-    get total(): number{return this._total;}
+    getTotal(): number{return this._total;}
 
     /** Retorna o valor total da venda */
-    get date(): string{return this._date;}
+    getDate(): string{return this._date;}
 
     /**
      * Adiciona um novo item à venda.
      * 
      * Cria um SaleItem baseado no produto e quantidade
-     * e adiciona ele à lista de itens da venda.
+     * e adiciona à lista de itens da venda.
      * 
      * @param product produto que será vendido
      * @param quantity quantidade vendida
+     * 
+     * @throws SaleAlreadyConfirmedError se a venda já estiver finalizada
+     * @throws InsufficientStockError se não houver estoque suficiente
      */
     addItem(product: Product, quantity: number){
 
         if(this._isConfirmed){
-            throw new Error("Venda já finalizada!")
+            throw new SaleAlreadyConfirmedError();
         }
 
-        if((product.stock - quantity) < 0){
-            throw new Error("Produto com estoque insuficiente!")
+        if((product.getStock() - quantity) < 0){
+            throw new InsufficientStockError();
         }
 
-        const id: number = idGenerator(this.takeAllSaleItems().reduce((accumulator, currentValue) => Math.max(accumulator, currentValue.saleItemId), 0));
+        const id: number = idGenerator(this.getAllSaleItems().reduce((accumulator, currentValue) => Math.max(accumulator, currentValue.getSaleItemId()), 0));
 
         const saleItem: SaleItem = new SaleItem(id,product, quantity);
 
@@ -84,36 +88,54 @@ export class Sale{
 
     }
 
+    /**
+     * Remove um item da venda pelo identificador.
+     * 
+     * @param saleItemId identificador do item da venda
+     * 
+     * @throws SaleAlreadyConfirmedError se a venda já estiver finalizada
+     * @throws SaleItemNotFoundError se o item não for encontrado
+     */
     removeItem(saleItemId: number){
 
         if(this._isConfirmed){
-            throw new Error("Venda já finalizada!")
+            throw new SaleAlreadyConfirmedError();
         }
 
-        const saleItemIndex: number = this._items.findIndex(saleItem => saleItem.saleItemId === saleItemId);
+        const saleItemIndex: number = this._items.findIndex(saleItem => saleItem.getSaleItemId() === saleItemId);
 
         if(saleItemIndex === -1){
-            throw new Error("Produto da venda não encontrado!");
+            throw new SaleItemNotFoundError();
         }
         this._items.splice(saleItemIndex, 1);
 
         this.calculateTotal();
     }
 
+    /**
+     * Aumenta a quantidade de um item da venda.
+     * 
+     * @param saleItemId identificador do item da venda
+     * @param quantity quantidade a ser adicionada
+     * 
+     * @throws SaleAlreadyConfirmedError se a venda já estiver finalizada
+     * @throws SaleItemNotFoundError se o item não for encontrado
+     * @throws InsufficientStockError se não houver estoque suficiente
+     */
     increaseQuantity(saleItemId: number, quantity: number){
 
         if(this._isConfirmed){
-            throw new Error("Venda já finalizada!")
+            throw new SaleAlreadyConfirmedError();
         }
 
-        const saleItemFound: SaleItem | undefined = this._items.find(saleItem => saleItem.saleItemId === saleItemId);
+        const saleItemFound: SaleItem | undefined = this._items.find(saleItem => saleItem.getSaleItemId() === saleItemId);
 
         if(!saleItemFound){
-            throw new Error("Produto da venda não encontrado!");
+            throw new SaleItemNotFoundError();
         }
 
-        if((saleItemFound.quantity + quantity) > saleItemFound.product.stock){
-            throw new Error("Produto com estoque insuficiente!")
+        if((saleItemFound.getQuantity() + quantity) > saleItemFound.getProduct().getStock()){
+            throw new InsufficientStockError();
         }
 
         saleItemFound.increaseQuantity(quantity);
@@ -121,23 +143,35 @@ export class Sale{
         this.calculateTotal();
     }
 
+    /**
+     * Diminui a quantidade de um item da venda.
+     * 
+     * Caso a quantidade do item chegue a zero,
+     * o item é automaticamente removido da venda.
+     * 
+     * @param saleItemId identificador do item da venda
+     * @param quantity quantidade a ser removida
+     * 
+     * @throws SaleAlreadyConfirmedError se a venda já estiver finalizada
+     * @throws SaleItemNotFoundError se o item não for encontrado
+     */
     decreaseQuantity(saleItemId: number, quantity: number){
 
         if(this._isConfirmed){
-            throw new Error("Venda já finalizada!")
+            throw new SaleAlreadyConfirmedError();
         }
 
-        const saleItemFound: SaleItem | undefined = this._items.find(saleItem => saleItem.saleItemId === saleItemId);
+        const saleItemFound: SaleItem | undefined = this._items.find(saleItem => saleItem.getSaleItemId() === saleItemId);
 
         if(!saleItemFound){
-            throw new Error("Produto da venda não encontrado!");
+            throw new SaleItemNotFoundError();
         }
 
         saleItemFound.decreaseQuantity(quantity);
 
-        if(saleItemFound.quantity === 0){
+        if(saleItemFound.getQuantity() === 0){
 
-            this.removeItem(saleItemFound.saleItemId);
+            this.removeItem(saleItemFound.getSaleItemId());
         }else{
 
             this.calculateTotal();
@@ -145,37 +179,56 @@ export class Sale{
 
     }
 
+    /**
+     * Recalcula o valor total da venda com base
+     * na soma dos preços totais dos itens.
+     */
     private calculateTotal(){
 
-        this._total = this._items.reduce((accumulator, currentValue) => accumulator + currentValue.totalPrice, 0);
+        this._total = this._items.reduce((accumulator, currentValue) => accumulator + currentValue.getTotalPrice(), 0);
 
     }
 
-    takeAllSaleItems(){
+    /**
+     * Retorna uma cópia da lista de itens da venda.
+     * 
+     * @returns lista de itens da venda
+     */
+    getAllSaleItems(): SaleItem[]{
 
-        const copyItems: SaleItem[] = this.items.slice();
+        const copyItems: SaleItem[] = this._items.slice();
 
-        return copyItems
+        return copyItems;
     }
 
+    /**
+     * Confirma a venda.
+     * 
+     * Valida se todos os itens possuem estoque suficiente
+     * e realiza a baixa no estoque dos produtos.
+     * 
+     * @throws SaleAlreadyConfirmedError se a venda já estiver finalizada
+     * @throws EmptySaleError se a venda não possuir itens
+     * @throws InsufficientStockError se algum item não possuir estoque suficiente
+     */
     confirmSale(){
 
         if(this._isConfirmed){
-            throw new Error("Venda já finalizada!")
+            throw new SaleAlreadyConfirmedError();
         }
 
         if(this._items.length === 0){
-            throw new Error("Venda vazia!")
+            throw new EmptySaleError();
         }
 
         this._items.forEach(saleItem => { 
-            if(saleItem.quantity > saleItem.product.stock){
-                throw new Error(saleItem.product.name + " com estoque insuficiente para venda!")
+            if(saleItem.getQuantity() > saleItem.getProduct().getStock()){
+                throw new InsufficientStockError(saleItem.getProduct().getName());
             }
         });
 
         this._items.forEach(saleItem => {
-        saleItem.product.decreaseStock(saleItem.quantity);
+        saleItem.getProduct().decreaseStock(saleItem.getQuantity());
         });
 
         this._isConfirmed = true;

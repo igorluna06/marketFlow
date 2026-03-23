@@ -1,3 +1,5 @@
+import { InvalidQuantityError } from "../utils/errors/productErrors/InvalidQuantityError";
+import { InsufficientItemQuantityError } from "../utils/errors/SaleItemErrors/InsufficientItemQuantityError";
 import { Product } from "./Product";
 
 /**
@@ -30,72 +32,91 @@ export class SaleItem {
     private _totalPrice: number = 0;
 
     /**
-     * Cria um novo item de venda
+     * Cria um novo item de venda.
      * 
+     * @param saleItemId identificador do item da venda
      * @param product produto associado ao item
      * @param quantity quantidade inicial do produto
+     * 
+     * @throws InvalidQuantityError se a quantidade for menor ou igual a zero
      */
     constructor(saleItemId: number, product: Product, quantity: number){
+        this._saleItemId = saleItemId;
         this._product = product;
         this.increaseQuantity(quantity);
-        this._saleItemId = saleItemId;
+        
     }
 
     /**
      * Retorna o produto associado ao item
      */
-    get product(): Product{return this._product;}
+    getProduct(): Product{return this._product;}
 
     /**
      * Retorna a quantidade do produto na venda
      */
-    get quantity(): number{return this._quantity;}
+    getQuantity(): number{return this._quantity;}
 
     /**
      * Retorna o preço total do item
      */
-    get totalPrice(): number{return this._totalPrice};
+    getTotalPrice(): number{return this._totalPrice};
 
-    get saleItemId(): number{return this._saleItemId};
+    /**
+     * Retorna o identificador do item da venda
+     */
+    getSaleItemId(): number{return this._saleItemId};
 
     /**
      * Aumenta a quantidade do item na venda.
      * 
      * O preço total é recalculado automaticamente
-     * baseado no preço do produto.
+     * com base no preço do produto.
      * 
      * @param quantity quantidade que será adicionada
-     * @throws Error se a quantidade for menor ou igual a zero
+     * 
+     * @throws InvalidQuantityError se a quantidade for menor ou igual a zero
      */
     increaseQuantity(quantity: number){
         if(quantity <= 0){
-            throw new Error("Quantidade não pode ser 0 ou negativo!")
+            throw new InvalidQuantityError();
         }
 
         this._quantity += quantity;
-        this._totalPrice = this._product.price * this._quantity;
+        this.calculateTotal();
     }
 
     /**
-     * Aumenta a quantidade do item na venda.
+     * Diminui a quantidade do item na venda.
      * 
      * O preço total é recalculado automaticamente
-     * baseado no preço do produto.
+     * com base no preço do produto.
      * 
-     * @param quantity quantidade que será adicionada
-     * @throws Error se a quantidade for menor ou igual a zero
+     * @param quantity quantidade que será removida
+     * 
+     * @throws InvalidQuantityError se a quantidade for menor ou igual a zero
+     * @throws InsufficientItemQuantityError se a quantidade a remover for maior que a disponível
      */
     decreaseQuantity(quantity: number){
         if(quantity <= 0){
-            throw new Error("Quantidade não pode ser 0 ou negativo!")
+            throw new InvalidQuantityError();
         }
 
         if((this._quantity - quantity) < 0){
-            throw new Error("Quantidade insuficiente!")
+            throw new InsufficientItemQuantityError();
         }
         
         this._quantity -= quantity;
-        this._totalPrice = this._product.price * this._quantity;
+        this.calculateTotal();
+    }
+
+    /**
+     * Recalcula o preço total do item com base
+     * no preço do produto e na quantidade atual.
+     */
+    private calculateTotal(){
+
+        this._totalPrice = this._product.getPrice() * this._quantity;
     }
 
 }

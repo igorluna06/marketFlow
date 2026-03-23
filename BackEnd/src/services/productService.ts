@@ -3,6 +3,9 @@ import { Product } from "../entities/Product";
 import { idGenerator} from "../utils/generators/IdGenerator";
 import { nameValidator } from "../utils/validators/nameValidator";
 import { codeValidator } from "../utils/validators/codeValidator";
+import { InvalidPriceError } from "../utils/errors/productErrors/InvalidPriceError";
+import { InvalidQuantityError } from "../utils/errors/productErrors/InvalidQuantityError";
+import { ProductNotFoundError } from "../utils/errors/productErrors/ProductNotFoundError";
 
 /**
  * Serviço responsável por gerenciar operações relacionadas a produtos.
@@ -44,45 +47,54 @@ export class ProductService{
      * @param code código do produto
      * @param name nome do produto
      * @param price preço do produto
-     * @param stock quantidade inicial em estoque
+     * @param quantity quantidade inicial em estoque
      * 
-     * @throws Error se o preço ou estoque forem menores ou iguais a zero
+     * @throws InvalidPriceError se o preço for menor ou igual a zero
+     * @throws InvalidQuantityError se a quantidade for menor ou igual a zero
      */
-    createProduct(code: string, name: string, price: number, stock: number){
+    createProduct(code: string, name: string, price: number, quantity: number){
 
         codeValidator(code);
         nameValidator(name);
 
         if(price <= 0){
-            throw new Error("Preço não pode ser 0 ou negativo")
+            throw new InvalidPriceError();
         }
-        if(stock <= 0){
-            throw new Error("Quantidade não pode ser 0 ou negativo")
+        if(quantity <= 0){
+            throw new InvalidQuantityError();
         }
 
         const productFound: Product | undefined = this.productRepository.findByCode(code);
 
         if(productFound){
-            productFound.increaseStock(stock);
+            productFound.increaseStock(quantity);
             
         }else{
 
-            const id: number= idGenerator(this.takeAllProducts().reduce((accumulator, currentValue) => Math.max(accumulator, currentValue.id), 0));
-            const product: Product = new Product(id, code, name, price, stock);
+            const id: number= idGenerator(this.takeAllProducts().reduce((accumulator, currentValue) => Math.max(accumulator, currentValue.getId()), 0));
+            const product: Product = new Product(id, code, name, price, quantity);
 
             this.productRepository.addProduct(product);
         }
 
     }
 
-    getByCode(code: string){
+    /**
+     * Busca um produto pelo código.
+     * 
+     * @param code código do produto
+     * @returns produto encontrado
+     * 
+     * @throws ProductNotFoundError se o produto não existir
+     */
+    getByCode(code: string): Product{
 
         codeValidator(code);
 
         const productFound: Product | undefined = this.productRepository.findByCode(code);
 
         if(!productFound){
-            throw new Error("Produto não encontrado!");
+            throw new ProductNotFoundError();
         }
 
         return productFound;
@@ -90,7 +102,7 @@ export class ProductService{
     }
 
     /**
-     * Atualiza um produto existente no repositório
+     * Atualiza um produto existente no repositório.
      * 
      * @param product produto atualizado
      */
@@ -100,22 +112,19 @@ export class ProductService{
     }
 
     /**
-     * Adiciona estoque a um produto existente
+     * Adiciona quantidade ao estoque de um produto.
      * 
      * @param quantity quantidade a ser adicionada
      * @param code código do produto
      * 
-     * @throws Error se o produto não existir
+     * @throws ProductNotFoundError se o produto não existir
+     * @throws InvalidQuantityError se a quantidade for menor ou igual a zero
      */
     addStock(quantity: number, code: string){
 
         codeValidator(code);
 
-        const productFound: Product | undefined = this.productRepository.findByCode(code);
-
-        if(!productFound){
-            throw new Error("Produto não encontrado!");
-        }
+        const productFound: Product = this.getByCode(code);
 
         productFound.increaseStock(quantity);
 
@@ -123,22 +132,20 @@ export class ProductService{
     }
 
     /**
-     * Remove quantidade do estoque de um produto
+     * Remove quantidade do estoque de um produto.
      * 
      * @param quantity quantidade a ser removida
      * @param code código do produto
      * 
-     * @throws Error se o produto não existir
+     * @throws ProductNotFoundError se o produto não existir
+     * @throws InvalidQuantityError se a quantidade for menor ou igual a zero
+     * @throws InsufficientStockError se não houver estoque suficiente
      */
     removeStock(quantity: number, code: string){
 
         codeValidator(code);
 
-        const productFound: Product | undefined = this.productRepository.findByCode(code);
-
-        if(!productFound){
-            throw new Error("Produto não encontrado!");
-        }
+        const productFound: Product = this.getByCode(code);
 
         productFound.decreaseStock(quantity);
 
@@ -146,28 +153,24 @@ export class ProductService{
     }
 
     /**
-     * Remove um produto do sistema
+     * Remove um produto do sistema.
      * 
      * @param code código do produto
      * 
-     * @throws Error se o produto não existir
+     * @throws ProductNotFoundError se o produto não existir
      */
     deleteProduct(code: string){
 
         codeValidator(code);
 
-        const productFound: Product | undefined = this.productRepository.findByCode(code);
-
-        if(!productFound){
-            throw new Error("Produto não encontrado!");
-        }
+        const productFound: Product = this.getByCode(code);
 
         this.productRepository.delete(productFound);
 
     }
 
     /**
-     * Retorna todos os produtos cadastrados no sistema
+     * Retorna todos os produtos cadastrados no sistema.
      * 
      * @returns lista de produtos
      */

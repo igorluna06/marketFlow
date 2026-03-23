@@ -1,9 +1,8 @@
 import { Sale } from "../entities/Sale";
 import fs from "fs";
 import path from "path";
-import { SaleItem } from "../entities/saleItem";
-import { Product } from "../entities/Product";
 import { reconstructEntities } from "../utils/reconstructors/entityReconstructor";
+import { SaleNotFoundError } from "../utils/errors/SaleErrors/SaleNotFoundError";
 
 
 export class SaleRepository{
@@ -12,6 +11,12 @@ export class SaleRepository{
 
     private filePath: string;
 
+    /**
+     * Inicializa o repositório de vendas.
+     * 
+     * Lê os dados do arquivo JSON e reconstrói
+     * as entidades de venda na memória.
+     */
     constructor(){
         this.filePath = path.join(__dirname, "../data/sale.json");
     
@@ -21,7 +26,12 @@ export class SaleRepository{
         this.sales = reconstructEntities(rawArray, Sale);
     }
 
-    
+    /**
+     * Persiste o estado atual das vendas no arquivo JSON.
+     * 
+     * Converte as entidades em formato serializável
+     * e salva no disco.
+     */
     private saveJson(){
     
         fs.writeFileSync(
@@ -31,24 +41,42 @@ export class SaleRepository{
     
     }
 
+    /**
+     * Adiciona uma nova venda ao repositório.
+     * 
+     * @param sale venda a ser adicionada
+     */
     addSale(sale: Sale){
         this.sales.push(sale);
         this.saveJson();
     }
 
+    /**
+     * Busca uma venda pelo identificador.
+     * 
+     * @param saleId identificador da venda
+     * @returns venda encontrada ou undefined
+     */
     findById(saleId: number): Sale | undefined{
     
-        const saleFound: Sale | undefined = this.sales.find(sale => sale.saleId === saleId);
+        const saleFound: Sale | undefined = this.sales.find(sale => sale.getSaleId() === saleId);
     
         return saleFound;
     }
 
+    /**
+     * Remove uma venda do repositório.
+     * 
+     * @param saleDelete venda a ser removida
+     * 
+     * @throws SaleNotFoundError se a venda não for encontrada
+     */
     delete(saleDelete: Sale){
     
-        const saleIndexRemove: number = this.sales.findIndex(sale => sale.saleId === saleDelete.saleId);
+        const saleIndexRemove: number = this.sales.findIndex(sale => sale.getSaleId() === saleDelete.getSaleId());
 
         if(saleIndexRemove === -1){
-            throw new Error("Venda não encontrada!")
+            throw new SaleNotFoundError();
         }
     
         this.sales.splice(saleIndexRemove, 1);
@@ -57,15 +85,31 @@ export class SaleRepository{
     
     }
     
+    /**
+     * Atualiza uma venda existente no repositório.
+     * 
+     * @param saleUpdate venda atualizada
+     * 
+     * @throws SaleNotFoundError se a venda não for encontrada
+     */
     update(saleUpdate: Sale){
     
-        const saleIndexUpdate: number = this.sales.findIndex(sale => sale.saleId === saleUpdate.saleId);
+        const saleIndexUpdate: number = this.sales.findIndex(sale => sale.getSaleId() === saleUpdate.getSaleId());
+
+        if(saleIndexUpdate === -1){
+            throw new SaleNotFoundError();
+        }
 
         this.sales[saleIndexUpdate] = saleUpdate;
     
         this.saveJson();
     }
 
+    /**
+     * Retorna todas as vendas cadastradas.
+     * 
+     * @returns lista de vendas
+     */
     findAll(): Sale[]{
 
         const copySales: Sale[] = this.sales.slice();
