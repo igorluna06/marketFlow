@@ -64,7 +64,7 @@ export class Sale{
      * @param product produto que será vendido
      * @param quantity quantidade vendida
      */
-    addItem(id: number, product: Product, quantity: number){
+    addItem(product: Product, quantity: number){
 
         if(this._isConfirmed){
             throw new Error("Venda já finalizada!")
@@ -73,6 +73,8 @@ export class Sale{
         if((product.stock - quantity) < 0){
             throw new Error("Produto com estoque insuficiente!")
         }
+
+        const id: number = idGenerator(this.takeAllSaleItems().reduce((accumulator, currentValue) => Math.max(accumulator, currentValue.saleItemId), 0));
 
         const saleItem: SaleItem = new SaleItem(id,product, quantity);
 

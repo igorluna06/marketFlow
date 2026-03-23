@@ -75,6 +75,20 @@ export class ProductService{
 
     }
 
+    getByCode(code: string){
+
+        codeValidator(code);
+
+        const productFound: Product | undefined = this.productRepository.findByCode(code);
+
+        if(!productFound){
+            throw new Error("Produto não encontrado!");
+        }
+
+        return productFound;
+
+    }
+
     /**
      * Atualiza um produto existente no repositório
      * 

@@ -61,13 +61,16 @@ export class SaleRepository{
     
         const saleIndexUpdate: number = this.sales.findIndex(sale => sale.saleId === saleUpdate.saleId);
 
-        if(saleIndexUpdate === -1){
-            throw new Error("Venda não encontrada!")
-        }
-    
         this.sales[saleIndexUpdate] = saleUpdate;
     
         this.saveJson();
+    }
+
+    findAll(): Sale[]{
+
+        const copySales: Sale[] = this.sales.slice();
+
+        return copySales;
     }
 
 
