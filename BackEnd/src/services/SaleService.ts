@@ -2,7 +2,7 @@ import { Sale } from "../entities/Sale";
 import { SaleRepository } from "../repository/SaleRepository";
 import { SaleNotFoundError } from "../utils/errors/SaleErrors/SaleNotFoundError";
 import { idGenerator } from "../utils/generators/IdGenerator";
-import { ProductService } from "./productService";
+import { ProductService } from "./ProductService";
 
 export class SaleService{
 

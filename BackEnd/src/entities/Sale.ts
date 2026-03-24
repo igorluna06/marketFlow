@@ -1,10 +1,10 @@
-import { InsufficientStockError } from "../utils/errors/productErrors/InsufficientStockError";
+import { InsufficientStockError } from "../utils/errors/ProductErrors/InsufficientStockError";
 import { EmptySaleError } from "../utils/errors/SaleErrors/EmptySaleError";
 import { SaleAlreadyConfirmedError } from "../utils/errors/SaleErrors/SaleAlreadyConfirmedError";
 import { SaleItemNotFoundError } from "../utils/errors/SaleItemErrors/SaleItemNotFoundError";
 import { idGenerator } from "../utils/generators/IdGenerator";
 import { Product } from "./Product";
-import { SaleItem } from "./saleItem";
+import { SaleItem } from "./SaleItem";
 
 /**
  * Representa uma venda no sistema.

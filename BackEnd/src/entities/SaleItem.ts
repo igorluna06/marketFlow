@@ -1,4 +1,4 @@
-import { InvalidQuantityError } from "../utils/errors/productErrors/InvalidQuantityError";
+import { InvalidQuantityError } from "../utils/errors/ProductErrors/InvalidQuantityError";
 import { InsufficientItemQuantityError } from "../utils/errors/SaleItemErrors/InsufficientItemQuantityError";
 import { Product } from "./Product";
 

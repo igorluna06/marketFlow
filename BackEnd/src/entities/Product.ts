@@ -1,6 +1,6 @@
-import { InsufficientStockError } from "../utils/errors/productErrors/InsufficientStockError";
-import { InvalidPriceError } from "../utils/errors/productErrors/InvalidPriceError";
-import { InvalidQuantityError } from "../utils/errors/productErrors/InvalidQuantityError";
+import { InsufficientStockError } from "../utils/errors/ProductErrors/InsufficientStockError";
+import { InvalidPriceError } from "../utils/errors/ProductErrors/InvalidPriceError";
+import { InvalidQuantityError } from "../utils/errors/ProductErrors/InvalidQuantityError";
 
 /**
  * Representa um produto no sistema.

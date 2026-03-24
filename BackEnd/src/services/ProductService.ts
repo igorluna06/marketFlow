@@ -3,9 +3,9 @@ import { Product } from "../entities/Product";
 import { idGenerator} from "../utils/generators/IdGenerator";
 import { nameValidator } from "../utils/validators/nameValidator";
 import { codeValidator } from "../utils/validators/codeValidator";
-import { InvalidPriceError } from "../utils/errors/productErrors/InvalidPriceError";
-import { InvalidQuantityError } from "../utils/errors/productErrors/InvalidQuantityError";
-import { ProductNotFoundError } from "../utils/errors/productErrors/ProductNotFoundError";
+import { InvalidPriceError } from "../utils/errors/ProductErrors/InvalidPriceError";
+import { InvalidQuantityError } from "../utils/errors/ProductErrors/InvalidQuantityError";
+import { ProductNotFoundError } from "../utils/errors/ProductErrors/ProductNotFoundError";
 
 /**
  * Serviço responsável por gerenciar operações relacionadas a produtos.
