@@ -233,4 +233,19 @@ export class Sale{
 
         this._isConfirmed = true;
     }
+
+    static fromJSON(data: any): Sale{
+
+        const items = data._items.map((item: any) =>
+        SaleItem.fromJSON(item)
+    );
+
+        const sale = new Sale(data._saleId, data._date);
+
+        sale._items = items;
+        sale._total = data._total;
+        sale._isConfirmed = data._isConfirmed;
+
+        return sale;
+    }
 }

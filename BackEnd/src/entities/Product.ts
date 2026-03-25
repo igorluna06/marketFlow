@@ -98,4 +98,15 @@ export class Product{
         this._stock -= quantity;
     }
 
+    static fromJSON(data: any): Product{
+
+        return new Product(
+            data._id,
+            data._code,
+            data._name,
+            data._price,
+            data._stock
+        );
+    }
+
 }

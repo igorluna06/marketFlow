@@ -18,12 +18,21 @@ export class SaleRepository{
      * as entidades de venda na memória.
      */
     constructor(){
-        this.filePath = path.join(__dirname, "../data/sale.json");
-    
-        const fileContent = fs.readFileSync(this.filePath, "utf-8");
-        const rawArray = JSON.parse(fileContent);
 
-        this.sales = reconstructEntities(rawArray, Sale);
+        let rawArray: any[] = [];
+
+        this.filePath = path.join(__dirname, "../data/sale.json");
+        
+        try{
+            const fileContent = fs.readFileSync(this.filePath, "utf-8");
+            const parsed = fileContent ? JSON.parse(fileContent) : [];
+            rawArray = Array.isArray(parsed) ? parsed : [];
+        }
+        catch (error){
+            rawArray = []
+        }
+
+        this.sales = reconstructEntities(rawArray, Sale.fromJSON);
     }
 
     /**

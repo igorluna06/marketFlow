@@ -9,10 +9,10 @@ export class SaleService{
     private saleRepository: SaleRepository;
     private productService: ProductService;
 
-    constructor(){
+    constructor(productService: ProductService){
 
         this.saleRepository = new SaleRepository();
-        this.productService = new ProductService();
+        this.productService = productService;
     }
 
     /**
@@ -123,6 +123,10 @@ export class SaleService{
         const saleFound: Sale = this.getSaleById(saleId);
 
         saleFound.confirmSale();
+
+        saleFound.getAllSaleItems().forEach(item => {
+        this.productService.updateProduct(item.getProduct());
+        });
 
         this.saleRepository.update(saleFound);
     }

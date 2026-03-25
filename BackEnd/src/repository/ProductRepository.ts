@@ -32,12 +32,20 @@ export class ProductRepository{
      * Inicializa o repositório carregando os produtos do arquivo JSON
      */
     constructor(){
+        let rawArray: any[] = [];
+        
         this.filePath = path.join(__dirname, "../data/products.json");
-
-        const fileContent = fs.readFileSync(this.filePath, "utf-8");
-        const rawArray = JSON.parse(fileContent);
-
-        this.products = reconstructEntities(rawArray, Product);
+                
+        try{
+            const fileContent = fs.readFileSync(this.filePath, "utf-8");
+            const parsed = fileContent ? JSON.parse(fileContent) : [];
+            rawArray = Array.isArray(parsed) ? parsed : [];
+        }
+        catch (error){
+            rawArray = []
+        }
+        
+        this.products = reconstructEntities(rawArray, Product.fromJSON);
     }
 
      /**

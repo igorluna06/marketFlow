@@ -1,5 +1,7 @@
-export function reconstructEntities<T>(data: any[], entityClass: new (...args: any[]) => T): T[] {
-    return data.map(item=> new entityClass(...Object.values(item)))
+export function reconstructEntities<T>(data: any[], factory: (item: any) => T): T[] {
+    if(!Array.isArray(data)) return [];
+
+    return data.map(item => factory(item));
 }
 
     

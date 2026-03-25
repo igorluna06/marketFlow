@@ -119,4 +119,13 @@ export class SaleItem {
         this._totalPrice = this._product.getPrice() * this._quantity;
     }
 
+    static fromJSON(data: any): SaleItem{
+
+        return new SaleItem(
+            data._saleItemId,
+            Product.fromJSON(data._product),
+            data._quantity,
+        );
+    }
+
 }
