@@ -23,13 +23,17 @@ export class SaleService{
      * 
      * @param date data da venda
      */
-    createSale(date: string){
+    createSale(): Sale{
 
         const id: number = idGenerator(this.getAllSales().reduce((accumulator, currentValue) => Math.max(accumulator, currentValue.getSaleId()), 0));
+
+        const date : string = new Date().toLocaleDateString("pt-BR");
 
         const sale: Sale = new Sale(id, date);
 
         this.saleRepository.addSale(sale);
+
+        return sale;
     }
 
     /**
