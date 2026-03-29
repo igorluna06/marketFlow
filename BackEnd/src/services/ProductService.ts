@@ -6,6 +6,7 @@ import { codeValidator } from "../utils/validators/codeValidator";
 import { InvalidPriceError } from "../utils/errors/ProductErrors/InvalidPriceError";
 import { InvalidQuantityError } from "../utils/errors/ProductErrors/InvalidQuantityError";
 import { ProductNotFoundError } from "../utils/errors/ProductErrors/ProductNotFoundError";
+import { codeGenerator } from "../utils/generators/codeGenerator";
 
 /**
  * Serviço responsável por gerenciar operações relacionadas a produtos.
@@ -52,32 +53,38 @@ export class ProductService{
      * @throws InvalidPriceError se o preço for menor ou igual a zero
      * @throws InvalidQuantityError se a quantidade for menor ou igual a zero
      */
-    createProduct(code: string, name: string, price: number, quantity: number){
+    createProduct(name: string, price: number, quantity: number){
 
-        codeValidator(code);
-        nameValidator(name);
+    const products = this.takeAllProducts();
 
-        if(price <= 0){
-            throw new InvalidPriceError();
-        }
-        if(quantity <= 0){
-            throw new InvalidQuantityError();
-        }
+    const lastCodeNumber = products.length > 0
+        ? Math.max(...products.map(p => Number(p.getCode().replace('#', ''))))
+        : 0;
 
-        const productFound: Product | undefined = this.productRepository.findByCode(code);
+    const code = codeGenerator(lastCodeNumber);
 
-        if(productFound){
-            productFound.increaseStock(quantity);
-            
-        }else{
+    nameValidator(name);
 
-            const id: number= idGenerator(this.takeAllProducts().reduce((accumulator, currentValue) => Math.max(accumulator, currentValue.getId()), 0));
-            const product: Product = new Product(id, code, name, price, quantity);
-
-            this.productRepository.addProduct(product);
-        }
-
+    if (price <= 0) {
+        throw new InvalidPriceError();
     }
+
+    if (quantity <= 0) {
+        throw new InvalidQuantityError();
+    }
+
+    const lastId = products.length > 0
+        ? Math.max(...products.map(p => p.getId()))
+        : 0;
+
+    const id: number = idGenerator(lastId);
+
+    const product: Product = new Product(id, code, name, price, quantity);
+
+    this.productRepository.addProduct(product);
+
+    return product;
+}
 
     /**
      * Busca um produto pelo código.
