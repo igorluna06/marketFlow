@@ -1,4 +1,4 @@
-import { InsufficientCartItemQuantityError } from "../utils/errors/CartItemErrors/InsufficientCartItemQuantityError";
+import { InvalidCartItemQuantityError } from "../utils/errors/CartItemErrors/InvalidCartItemQuantityError";
 import { Product } from "./Product";
 
 /**
@@ -42,7 +42,7 @@ export class CartItem {
     constructor(cartItemId: number, product: Product){
         this._cartItemId = cartItemId;
         this._product = product;
-        this.increaseQuantity();
+        this._quantity = 0;
     }
 
     /**
@@ -75,30 +75,11 @@ export class CartItem {
      * 
      * @throws InvalidQuantityError se a quantidade for menor ou igual a zero
      */
-    increaseQuantity(){
-
-        this._quantity ++;
-        this.calculateTotal();
-    }
-
-    /**
-     * Diminui a quantidade do item na venda.
-     * 
-     * O preço total é recalculado automaticamente
-     * com base no preço do produto.
-     * 
-     * @param quantity quantidade que será removida
-     * 
-     * @throws InvalidQuantityError se a quantidade for menor ou igual a zero
-     * @throws InsufficientItemQuantityError se a quantidade a remover for maior que a disponível
-     */
-    decreaseQuantity(){
-
-        if((this._quantity - 1) < 0){
-            throw new InsufficientCartItemQuantityError();
+    setQuantity(quantity: number){
+        if(quantity < 1){
+            throw new InvalidCartItemQuantityError();
         }
-
-        this._quantity--;
+        this._quantity = quantity;
         this.calculateTotal();
     }
 

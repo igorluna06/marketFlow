@@ -74,34 +74,13 @@ export class CartService{
 
     }
 
-    /**
-     * Aumenta a quantidade de um item no carrinho.
-     * 
-     * @param cartItemId identificador do item
-     * @throws CartNotCreatedError se o carrinho não existir
-     */
-    increaseQuantity(cartItemId: number){
+    updateItemQuantity(cartItemId: number, quantity: number){
 
         if(!this.cart){
             throw new CartNotCreatedError();
         }
 
-        this.cart.increaseQuantityCartItem(cartItemId);
-    }
-
-    /**
-     * Diminui a quantidade de um item no carrinho.
-     * 
-     * @param cartItemId identificador do item
-     * @throws CartNotCreatedError se o carrinho não existir
-     */
-    decreaseQuantity(cartItemId: number){
-
-        if(!this.cart){
-            throw new CartNotCreatedError();
-        }
-
-        this.cart.decreaseQuantityCartItem(cartItemId);
+        this.cart.updateCartItemQuantity(cartItemId, quantity);
     }
 
     /**
@@ -117,6 +96,15 @@ export class CartService{
         }
 
         return this.cart;
+    }
+
+    clearCart(){
+
+        if(!this.cart){
+            throw new CartNotCreatedError();
+        }
+
+        this.cart.clearCart();
     }
 
     /**
@@ -151,7 +139,7 @@ export class CartService{
 
         this.saleService.confirmSale(sale.getSaleId());
 
-        this.cart.clearCart();
+        this.clearCart();
     }
 
 

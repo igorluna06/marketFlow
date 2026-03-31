@@ -62,74 +62,21 @@ export class Cart{
 
         if(cartItemFound){
 
-            cartItemFound.increaseQuantity();
+            cartItemFound.setQuantity(cartItemFound.getQuantity() + 1);
         }
         else{
 
             const id: number = idGenerator(this.getAllCartItems().reduce((accumulator, currentValue) => Math.max(accumulator, currentValue.getCartItemId()), 0));
 
             const cartItem: CartItem = new CartItem(id, product);
+
+            cartItem.setQuantity(1);
         
             this._items.push(cartItem);
 
         }
 
         this.calculateTotal();
-    }
-
-    /**
-     * Adiciona um produto ao carrinho.
-     * 
-     * Se o produto já existir no carrinho, sua quantidade é incrementada.
-     * Caso contrário, um novo item é criado.
-     * 
-     * @param product produto a ser adicionado
-     * @throws CartNotCreatedError se o carrinho não estiver disponível
-     */
-    increaseQuantityCartItem(cartItemId: number){
-
-        if(!this._items){
-            throw new CartNotCreatedError();
-        }
-
-        const cartItemFound: CartItem | undefined = this._items.find(cartItem => cartItem.getCartItemId() === cartItemId);
-
-        if(!cartItemFound){
-            throw new CartItemNotFoundError();
-        }
-
-        cartItemFound.increaseQuantity();
-
-        this.calculateTotal();
-    }
-
-    /**
-     * Aumenta a quantidade de um item do carrinho.
-     * 
-     * @param cartItemId identificador do item
-     * @throws CartNotCreatedError se o carrinho não estiver disponível
-     * @throws CartItemNotFoundError se o item não for encontrado
-     */
-    decreaseQuantityCartItem(cartItemId: number){
-
-        if(!this._items){
-            throw new CartNotCreatedError();
-        }
-
-        const cartItemFound: CartItem | undefined = this._items.find(cartItem => cartItem.getCartItemId() === cartItemId);
-
-        if(!cartItemFound){
-            throw new CartItemNotFoundError();
-        }
-
-        cartItemFound.decreaseQuantity();
-
-        if(cartItemFound.getQuantity() === 0){
-            this.removeCartItem(cartItemFound.getCartItemId());
-        }
-
-        this.calculateTotal();
-        
     }
 
     /**
@@ -152,6 +99,30 @@ export class Cart{
         }
 
         this._items.splice(cartItemIndex, 1);
+
+        this.calculateTotal();
+
+    }
+
+    updateCartItemQuantity(cartItemId: number, quantity: number){
+
+        if(!this._items){
+        throw new CartNotCreatedError();
+        }
+
+        const cartItemFound: CartItem | undefined =
+            this._items.find(item => item.getCartItemId() === cartItemId);
+
+        if(!cartItemFound){
+            throw new CartItemNotFoundError();
+        }
+
+        if(quantity === 0){
+            this.removeCartItem(cartItemId);
+            return;
+        }
+
+        cartItemFound.setQuantity(quantity);
 
         this.calculateTotal();
 

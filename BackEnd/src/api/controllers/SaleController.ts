@@ -18,21 +18,21 @@ export class SaleController{
         }
         catch(error: any){
 
-            return res.status(400).json({message: error.message})
+            return res.status(400).json({message: error.message});
         }
 
     }
 
-    getSaleById(req: Request<{id: string}>, res: Response){
+    getSaleById(req: Request, res: Response){
 
         try{
 
             const id = Number(req.params.id);
-            const sale = this.saleService.getSaleById(id)
+            const sale = this.saleService.getSaleById(id);
             res.json(sale);
         }
         catch(error: any){
-            return res.status(400).json({message: error.message})
+            return res.status(400).json({message: error.message});
         }
     }
 }
