@@ -1,14 +1,14 @@
 [
   {
     "_price": 1.1,
-    "_stock": 23,
+    "_stock": 18,
     "_id": 1,
     "_code": "#0001",
     "_name": "Pão Francês"
   },
   {
     "_price": 5.5,
-    "_stock": 2,
+    "_stock": 10,
     "_id": 2,
     "_code": "#0002",
     "_name": "Leite"

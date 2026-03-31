@@ -42,5 +42,25 @@
     "_total": 28.5,
     "_date": "25/06/2026",
     "_isConfirmed": true
+  },
+  {
+    "_saleId": 2,
+    "_items": [
+      {
+        "_quantity": 5,
+        "_totalPrice": 5.5,
+        "_saleItemId": 1,
+        "_product": {
+          "_price": 1.1,
+          "_stock": 18,
+          "_id": 1,
+          "_code": "#0001",
+          "_name": "Pão Francês"
+        }
+      }
+    ],
+    "_total": 5.5,
+    "_date": "31/03/2026",
+    "_isConfirmed": true
   }
 ]

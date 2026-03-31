@@ -9,7 +9,7 @@ export class ProductController{
         this.productService = productService;
     }
 
-    getAll(req: Request, res: Response){
+    getAllProducts(req: Request, res: Response){
 
         try{
             const products = this.productService.takeAllProducts();
@@ -21,7 +21,7 @@ export class ProductController{
         
     }
 
-    create(req: Request, res: Response){
+    createProduct(req: Request, res: Response){
 
         try{
             const {name, price, quantity} = req.body;
@@ -36,11 +36,12 @@ export class ProductController{
         }
     }
 
-    getByCode(req: Request<{code: string}>, res: Response){
+    getProductByCode(req: Request, res: Response){
 
         try{
 
-            const code = req.params.code;
+            const codeParam = String(req.params.code);
+            const code = "#" + codeParam;
 
             const product = this.productService.getByCode(code);
 
@@ -50,6 +51,60 @@ export class ProductController{
         catch(error: any){
 
             return res.status(400).json({ message: error.message });
+        }
+    }
+
+    removeProduct(req: Request, res: Response){
+
+        try{
+
+            const codeParam = String(req.params.code);
+            const code = "#" + codeParam;
+            this.productService.deleteProduct(code);
+            return res.status(200).json({message: "Produto removido com sucesso"});;
+        }
+        catch(error: any){
+            return res.status(400).json({message: error.message});
+        }
+    }
+
+    addStock(req: Request, res: Response){
+
+        try{
+
+            const codeParam = req.params.code;
+            const {quantity} = req.body;
+            const parsedCode = String(codeParam);
+            const code = "#" + parsedCode;
+            const parsedQuantity = Number(quantity);
+            if (isNaN(parsedQuantity)) {
+                return res.status(400).json({ message: "Quantidade inválida" });
+            }
+            this.productService.addStock(parsedQuantity,code);
+            return res.status(200).json({message: "Estoque adicionado com sucesso"});
+        }
+        catch(error: any){
+            return res.status(400).json({message: error.message});
+        }
+    }
+
+    removeStock(req: Request, res: Response){
+
+        try{
+
+            const codeParam = req.params.code;
+            const {quantity} = req.body;
+            const parsedCode = String(codeParam);
+            const code = "#" + parsedCode;
+            const parsedQuantity = Number(quantity);
+            if (isNaN(parsedQuantity)) {
+                return res.status(400).json({ message: "Quantidade inválida" });
+            }
+            this.productService.removeStock(parsedQuantity,code);
+            return res.status(200).json({message: "Estoque removido com sucesso"});
+        }
+        catch(error: any){
+            return res.status(400).json({message: error.message});
         }
     }
 

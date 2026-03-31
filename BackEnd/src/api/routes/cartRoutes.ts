@@ -14,4 +14,6 @@ router.post("/items/:code", (req,res) => controller.addItemToCart(req, res));
 router.put("/items", (req,res) => controller.updateItemQuantity(req, res));
 router.delete("/items/:id", (req,res) => controller.removeItemFromCart(req, res));
 
+router.post("/confirm", (req,res) => controller.confirmCart(req, res));
+
 export default router;
