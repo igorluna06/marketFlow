@@ -62,5 +62,57 @@
     "_total": 5.5,
     "_date": "31/03/2026",
     "_isConfirmed": true
+  },
+  {
+    "_saleId": 3,
+    "_items": [
+      {
+        "_quantity": 10,
+        "_totalPrice": 11,
+        "_saleItemId": 1,
+        "_product": {
+          "_price": 1.1,
+          "_stock": 23,
+          "_id": 1,
+          "_code": "#0001",
+          "_name": "Pão Francês"
+        }
+      },
+      {
+        "_quantity": 1,
+        "_totalPrice": 5.5,
+        "_saleItemId": 2,
+        "_product": {
+          "_price": 5.5,
+          "_stock": 9,
+          "_id": 2,
+          "_code": "#0002",
+          "_name": "Leite"
+        }
+      }
+    ],
+    "_total": 16.5,
+    "_date": "01/04/2026",
+    "_isConfirmed": true
+  },
+  {
+    "_saleId": 4,
+    "_items": [
+      {
+        "_quantity": 1,
+        "_totalPrice": 5.5,
+        "_saleItemId": 1,
+        "_product": {
+          "_price": 5.5,
+          "_stock": 8,
+          "_id": 2,
+          "_code": "#0002",
+          "_name": "Leite"
+        }
+      }
+    ],
+    "_total": 5.5,
+    "_date": "02/04/2026",
+    "_isConfirmed": true
   }
 ]

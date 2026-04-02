@@ -1,14 +1,26 @@
 import { CartService } from "../../services/CartService";
 import { Request, Response } from "express";
+import { formatCode } from "../../utils/formatter/formatCode";
 
+/**
+ * Controller responsável por gerenciar as requisições relacionadas ao carrinho.
+ * Atua como intermediário entre as rotas (HTTP) e a lógica de negócio (CartService).
+ */
 export class CartController{
 
     private cartService: CartService;
-
+    /**
+     * Injeta a dependência do CartService.
+     * @param cartService Serviço responsável pelas regras de negócio do carrinho
+     */
     constructor(cartService: CartService){
         this.cartService = cartService;
     }
 
+    /**
+     * Cria um novo carrinho.
+     * @route POST /cart
+     */
     createCart(req: Request, res: Response){
 
         try{
@@ -21,6 +33,10 @@ export class CartController{
         }
     }
 
+    /**
+     * Retorna os dados do carrinho atual.
+     * @route GET /cart
+     */
     getCart(req: Request, res: Response){
 
         try{
@@ -34,6 +50,11 @@ export class CartController{
         }
     }
 
+    /**
+     * Remove um item do carrinho com base no ID.
+     * @route DELETE /cart/item/:id
+     * @param req.params.id ID do item a ser removido
+     */
     removeItemFromCart(req: Request, res: Response){
 
         try{
@@ -50,6 +71,10 @@ export class CartController{
         }
     }
 
+    /**
+     * Remove todos os itens do carrinho.
+     * @route DELETE /cart
+     */
     clearCart(req: Request, res: Response){
 
         try{
@@ -62,11 +87,16 @@ export class CartController{
         }
     }
 
+    /**
+     * Adiciona um item ao carrinho com base no código do produto.
+     * @route POST /cart/item/:code
+     * @param req.params.code Código do produto (sem o #, que é adicionado internamente)
+     */
     addItemToCart(req: Request, res: Response){
 
         try{
             const codeParam= String(req.params.code);
-            const code = "#" + codeParam;
+            const code = formatCode(codeParam);
 
             this.cartService.addItemToCart(code);
 
@@ -77,6 +107,12 @@ export class CartController{
         }
     }
 
+    /**
+     * Atualiza a quantidade de um item no carrinho.
+     * @route PUT /cart/item
+     * @param req.body.id ID do item
+     * @param req.body.quantity Nova quantidade
+     */
     updateItemQuantity(req: Request, res: Response){
 
         try{
@@ -96,6 +132,11 @@ export class CartController{
         }
     }
 
+    /**
+     * Confirma a compra do carrinho.
+     * Converte o carrinho em uma venda.
+     * @route POST /cart/confirm
+     */
     confirmCart(req: Request, res: Response){
 
         try{

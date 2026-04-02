@@ -1,14 +1,14 @@
 [
   {
     "_price": 1.1,
-    "_stock": 18,
+    "_stock": 23,
     "_id": 1,
     "_code": "#0001",
     "_name": "Pão Francês"
   },
   {
     "_price": 5.5,
-    "_stock": 10,
+    "_stock": 8,
     "_id": 2,
     "_code": "#0002",
     "_name": "Leite"
@@ -19,5 +19,26 @@
     "_id": 3,
     "_code": "#0003",
     "_name": "Coca Cola"
+  },
+  {
+    "_price": 10.5,
+    "_stock": 20,
+    "_id": 4,
+    "_code": "#0004",
+    "_name": "Suco de laranja"
+  },
+  {
+    "_price": 10.5,
+    "_stock": 20,
+    "_id": 5,
+    "_code": "#0005",
+    "_name": "Suco de uva"
+  },
+  {
+    "_price": 10.5,
+    "_stock": 20,
+    "_id": 6,
+    "_code": "#0006",
+    "_name": "Suco de uva"
   }
 ]
